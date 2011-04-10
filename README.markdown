@@ -2,6 +2,9 @@
 
 add tweetie like pull feature for Reeder
 
+![](http://dl.dropbox.com/u/149268/Pull.png)
+![](http://dl.dropbox.com/u/149268/Release.png)
+![](http://dl.dropbox.com/u/149268/Sync.png)
 
 ##License
 [leah / PullToRefresh](https://github.com/leah/PullToRefresh)
