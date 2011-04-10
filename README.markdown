@@ -6,8 +6,7 @@ add tweetie like pull feature for Reeder
 ![](http://dl.dropbox.com/u/149268/Release.png)
 ![](http://dl.dropbox.com/u/149268/Sync.png)
 
-#License
-##[leah / PullToRefresh](https://github.com/leah/PullToRefresh)
+#License   [leah / PullToRefresh](https://github.com/leah/PullToRefresh)
 Copyright (c) 2010 Leah Culver
 
 Permission is hereby granted, free of charge, to any person obtaining
