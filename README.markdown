@@ -4,7 +4,7 @@ add tweetie like pull to sync feature to Reeder.app
 
 ![](http://dl.dropbox.com/u/149268/Pull2.png) 
 ![](http://dl.dropbox.com/u/149268/Release2.png) 
-![](http://dl.dropbox.com/u/149268/Sync2.png)
+![](http://dl.dropbox.com/u/149268/Sync2_.png)
 
 ##License
 [leah / PullToRefresh](https://github.com/leah/PullToRefresh)
