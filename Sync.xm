@@ -180,9 +180,9 @@ static void PullFeatureForReeder_initializer()
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	soundEnable = NO;
-	NSURL *psst1WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst1.wav"];
-	NSURL *psst2WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst2.wav"];
-	NSURL *popWavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/pop.wav"];
+	NSURL *psst1WavURL = [NSURL fileURLWithPath:@"/Library/PullFeatureForReeder/psst1.wav"];
+	NSURL *psst2WavURL = [NSURL fileURLWithPath:@"/Library/PullFeatureForReeder/psst2.wav"];
+	NSURL *popWavURL = [NSURL fileURLWithPath:@"/Library/PullFeatureForReeder/pop.wav"];
 	AudioServicesCreateSystemSoundID((CFURLRef)psst1WavURL, &psst1SoundId);
 	AudioServicesCreateSystemSoundID((CFURLRef)psst2WavURL, &psst2SoundId);
 	AudioServicesCreateSystemSoundID((CFURLRef)popWavURL, &popSoundId);
