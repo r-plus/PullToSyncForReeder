@@ -49,7 +49,7 @@
     			<key>cell</key>
     			<string>PSGroupCell</string>
     			<key>footerText</key>
-    			<string>SouceCode on github.</string>
+    			<string>SourceCode on github.</string>
 		</dict>
     </array>
 </dict>
