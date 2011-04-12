@@ -6,7 +6,8 @@
 #define TEXT_PULL @"Pull down to sync"
 #define TEXT_RELEASE @"Release to sync"
 #define TEXT_SYNCING @"Syncing"
-				
+
+__attribute__((visibility("hidden")))
 @interface FeedListController : UITableViewController {
 }
 - (void)addPullToRefreshHeader;
