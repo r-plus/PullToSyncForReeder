@@ -1,9 +1,9 @@
 Package: jp.r-plus.pulltosyncforreeder
-Name: PullToSyncForReeder
+Name: PullFeatureForReeder
 Depends: mobilesubstrate
-Version: 0.1
+Version: 0.2
 Architecture: iphoneos-arm
-Description: tweetie like pull to sync feature to Reeder
+Description: tweetie like pull feature to Reeder
 Maintainer: r_plus
 Author: r_plus
 Section: Tweaks

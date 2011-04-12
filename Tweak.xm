@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <AudioToolbox/AudioServices.h>
 
 #define REFRESH_HEADER_HEIGHT 48.0f   //52.0f
 #define THRESHOLD_HEIGHT 54.0f
@@ -14,6 +15,7 @@
 - (void)stopLoading;
 - (void)refresh;
 - (id)sync:(id)sync;
+- (void)loadSounds;
 @end
 
 %hook FeedListController
@@ -24,6 +26,10 @@
   UIActivityIndicatorView *refreshSpinner;
   BOOL isDragging;
   BOOL isLoading;
+	BOOL soundEnable;
+	SystemSoundID psst1SoundId;
+	SystemSoundID psst2SoundId;
+	SystemSoundID popSoundId;
 
 - (void)viewDidLoad {
 	%orig;
@@ -77,9 +83,17 @@
 		if (scrollView.contentOffset.y < -THRESHOLD_HEIGHT) {
 			refreshLabel.text = TEXT_RELEASE;
 			[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
+			if (!soundEnable) {
+				AudioServicesPlaySystemSound(psst1SoundId);
+				soundEnable = YES;
+			}
 		} else {
 			refreshLabel.text = TEXT_PULL;
 			[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
+			if (soundEnable) {
+				AudioServicesPlaySystemSound(popSoundId);
+				soundEnable = NO;
+			}
 		}
 		[UIView commitAnimations];
 	}
@@ -127,10 +141,13 @@
 	refreshLabel.text = TEXT_PULL;
 	refreshArrow.hidden = NO;
 	[refreshSpinner stopAnimating];
+	AudioServicesPlaySystemSound(popSoundId);
 }
 
 %new(v@:)
 - (void)refresh {
+	soundEnable = NO;
+	AudioServicesPlaySystemSound(psst2SoundId);
 	[self sync:self];
 	[self performSelector:@selector(stopLoading) withObject:nil afterDelay:1.0];
 }
@@ -140,7 +157,27 @@
 	[refreshLabel release];
 	[refreshArrow release];
 	[refreshSpinner release];
+	AudioServicesDisposeSystemSoundID(psst1SoundId);
+	AudioServicesDisposeSystemSoundID(psst2SoundId);
+	AudioServicesDisposeSystemSoundID(popSoundId);
 	%orig;
 }
 
 %end
+
+__attribute__((constructor)) 
+static void PullFeatureForReeder_initializer() 
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+	soundEnable = NO;
+	NSURL *psst1WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst1.wav"];
+	NSURL *psst2WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst2.wav"];
+	NSURL *popWavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/pop.wav"];
+	AudioServicesCreateSystemSoundID((CFURLRef)psst1WavURL, &psst1SoundId);
+	AudioServicesCreateSystemSoundID((CFURLRef)psst2WavURL, &psst2SoundId);
+	AudioServicesCreateSystemSoundID((CFURLRef)popWavURL, &popSoundId);
+
+	[pool release];
+
+}
