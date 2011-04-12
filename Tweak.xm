@@ -15,7 +15,6 @@
 - (void)stopLoading;
 - (void)refresh;
 - (id)sync:(id)sync;
-- (void)loadSounds;
 @end
 
 %hook FeedListController
@@ -126,6 +125,7 @@
 %new(v@:)
 - (void)stopLoading {
 	isLoading = NO;
+	AudioServicesPlaySystemSound(popSoundId);
 	
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDelegate:self];
@@ -141,7 +141,6 @@
 	refreshLabel.text = TEXT_PULL;
 	refreshArrow.hidden = NO;
 	[refreshSpinner stopAnimating];
-	AudioServicesPlaySystemSound(popSoundId);
 }
 
 %new(v@:)
