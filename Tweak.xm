@@ -3,7 +3,6 @@
 #import <AudioToolbox/AudioServices.h>
 
 #define REFRESH_HEADER_HEIGHT 48.0f   //52.0f
-#define THRESHOLD_HEIGHT 54.0f
 #define TEXT_PULL @"Pull down to sync"
 #define TEXT_RELEASE @"Release to sync"
 #define TEXT_SYNCING @"Syncing"
@@ -29,6 +28,7 @@
 	SystemSoundID psst1SoundId;
 	SystemSoundID psst2SoundId;
 	SystemSoundID popSoundId;
+	static float SyncArrowThreshold = 54.0f;
 
 - (void)viewDidLoad {
 	%orig;
@@ -75,11 +75,11 @@
 	if (isLoading) {
 		if (scrollView.contentOffset.y > 0)
 		self.tableView.contentInset = UIEdgeInsetsZero;
-		else if (scrollView.contentOffset.y >= -THRESHOLD_HEIGHT)
+		else if (scrollView.contentOffset.y >= -SyncArrowThreshold)
 		self.tableView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0);
 	} else if (isDragging && scrollView.contentOffset.y < 0) {
 		[UIView beginAnimations:nil context:NULL];
-		if (scrollView.contentOffset.y < -THRESHOLD_HEIGHT) {
+		if (scrollView.contentOffset.y < -SyncArrowThreshold) {
 			refreshLabel.text = TEXT_RELEASE;
 			[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
 			if (!soundEnable) {
@@ -102,7 +102,7 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
 	if (isLoading) return;
 	isDragging = NO;
-	if (scrollView.contentOffset.y <= -THRESHOLD_HEIGHT) {
+	if (scrollView.contentOffset.y <= -SyncArrowThreshold) {
 		[self startLoading];
 	}
 }
@@ -113,7 +113,7 @@
 	
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:0.3];
-	self.tableView.contentInset = UIEdgeInsetsMake(THRESHOLD_HEIGHT, 0, 0, 0);
+	self.tableView.contentInset = UIEdgeInsetsMake(SyncArrowThreshold, 0, 0, 0);
 	refreshLabel.text = TEXT_SYNCING;
 	refreshArrow.hidden = YES;
 	[refreshSpinner startAnimating];
@@ -164,6 +164,15 @@
 
 %end
 
+static void LoadSettings(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+	NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/jp.r-plus.PullFeatureForReeder.plist"];
+	SyncArrowThreshold = [[dict objectForKey:@"SyncArrowThreshold"] floatValue];
+	if(!SyncArrowThreshold) SyncArrowThreshold = 54.0f;
+	
+	[dict release];
+}
+
 __attribute__((constructor)) 
 static void PullFeatureForReeder_initializer() 
 {
@@ -176,7 +185,8 @@ static void PullFeatureForReeder_initializer()
 	AudioServicesCreateSystemSoundID((CFURLRef)psst1WavURL, &psst1SoundId);
 	AudioServicesCreateSystemSoundID((CFURLRef)psst2WavURL, &psst2SoundId);
 	AudioServicesCreateSystemSoundID((CFURLRef)popWavURL, &popSoundId);
-
+	
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, LoadSettings, CFSTR("jp.r-plus.PullFeatureForReeder.settingschanged"), NULL, CFNotificationSuspensionBehaviorCoalesce);
 	[pool release];
 
 }

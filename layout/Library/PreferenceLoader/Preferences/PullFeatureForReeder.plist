@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>title</key>
+	<string>PullFeatureForReeder</string>
+	<key>entry</key>
+	<dict>
+		<key>cell</key>
+		<string>PSLinkCell</string>
+		<key>icon</key>
+		<string>PullFeatureForReeder.png</string>
+		<key>label</key>
+		<string>PullFeatureForReeder</string>
+	</dict>
+	<key>items</key>
+	<array>
+         <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Sync Arrow Threshold</string>
+        </dict>
+       <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>default</key>
+            <real>54.0</real>
+            <key>min</key>
+            <real>40.0</real>
+            <key>max</key>
+            <real>100.0</real>
+            <key>showValue</key>
+            <true/>
+            <key>key</key>
+            <string>SyncArrowThreshold</string>
+            <key>defaults</key>
+            <string>jp.r-plus.PullFeatureForReeder</string>
+            <key>PostNotification</key>
+            <string>jp.r-plus.PullFeatureForReeder.settingschanged</string>
+        </dict>
+        	<dict>
+    			<key>cell</key>
+    			<string>PSGroupCell</string>
+    			<key>footerText</key>
+    			<string>author @r_plus</string>
+		</dict>
+		<dict>
+    			<key>cell</key>
+    			<string>PSGroupCell</string>
+    			<key>footerText</key>
+    			<string>SouceCode on github.</string>
+		</dict>
+    </array>
+</dict>
+</plist>
