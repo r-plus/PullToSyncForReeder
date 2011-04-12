@@ -6,7 +6,7 @@ add tweetie like pull to sync/read feature to Reeder.app
 ![](http://dl.dropbox.com/u/149268/Release2.png) 
 ![](http://dl.dropbox.com/u/149268/Sync2_.png)
 
-###Reference of FooterPullArrow
+##Reference of FooterPullArrow
 
 [XCC / Scrollout](http://ameblo.jp/xcc/entry-10490740939.html)
 
