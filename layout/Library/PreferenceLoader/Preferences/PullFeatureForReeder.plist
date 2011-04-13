@@ -15,6 +15,20 @@
 	</dict>
 	<key>items</key>
 	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+              <string>jp.r-plus.PullFeatureForReeder</string>
+			<key>key</key>
+			<string>ReadEnabled</string>
+			<key>label</key>
+			<string>Read Arrow Enabled</string>
+              <key>PostNotification</key>
+              <string>jp.r-plus.PullFeatureForReeder.settingschanged</string>
+		</dict>
          <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
@@ -25,15 +39,39 @@
             <key>cell</key>
             <string>PSSliderCell</string>
             <key>default</key>
-            <real>54.0</real>
+            <real>65.0</real>
             <key>min</key>
             <real>40.0</real>
             <key>max</key>
-            <real>100.0</real>
+            <real>150.0</real>
             <key>showValue</key>
             <true/>
             <key>key</key>
             <string>SyncArrowThreshold</string>
+            <key>defaults</key>
+            <string>jp.r-plus.PullFeatureForReeder</string>
+            <key>PostNotification</key>
+            <string>jp.r-plus.PullFeatureForReeder.settingschanged</string>
+        </dict>
+         <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>Read Arrow Threshold</string>
+        </dict>
+       <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>default</key>
+            <real>65.0</real>
+            <key>min</key>
+            <real>40.0</real>
+            <key>max</key>
+            <real>150.0</real>
+            <key>showValue</key>
+            <true/>
+            <key>key</key>
+            <string>ReadArrowThreshold</string>
             <key>defaults</key>
             <string>jp.r-plus.PullFeatureForReeder</string>
             <key>PostNotification</key>
