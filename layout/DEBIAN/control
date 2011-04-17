@@ -1,9 +1,16 @@
+Name: Pull To Sync for Reeder
 Package: jp.r-plus.pulltosyncforreeder
-Name: PullFeatureForReeder
-Depends: mobilesubstrate
-Version: 1.0
+Priority: optional
+Depends: mobilesubstrate, preferenceloader
+Version: 1.1
 Architecture: iphoneos-arm
-Description: add tweetie like pull feature to Reeder
-Maintainer: r_plus
-Author: r_plus
+Description: adds pull-to-sync feature to Reeder
+Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=pulltosyncforreederData
+Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=pulltosyncforreederData
+Sponsor: thebigboss.org <http://thebigboss.org>
+Maintainer: BigBoss <bigboss@thebigboss.org>
+Author: r_plus <anasthasia.r@gmail.com>
 Section: Tweaks
+Tag: purpose::extension
+dev: rplus
+Icon: file:///Library/PreferenceLoader/Preferences/PullToSyncForReeder@2x.png
