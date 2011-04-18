@@ -2,7 +2,7 @@ Name: Pull To Sync for Reeder
 Package: jp.r-plus.pulltosyncforreeder
 Priority: optional
 Depends: mobilesubstrate, preferenceloader
-Version: 1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: adds pull-to-sync feature to Reeder
 Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=pulltosyncforreederData

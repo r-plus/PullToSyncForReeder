@@ -19,6 +19,40 @@
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
+            <string>Header function</string>
+        </dict>
+        		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>default</key>
+			<integer>0</integer>
+			<key>defaults</key>
+			<string>jp.r-plus.PullToSyncForReeder</string>
+			<key>key</key>
+			<string>HeaderFunction</string>
+			<key>label</key>
+			<string>Pull down to</string>
+			<key>PostNotification</key>
+			<string>jp.r-plus.PullToSyncForReeder.settingschanged</string>
+			<key>detail</key>
+			<string>PSListItemsController</string>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+				<integer>2</integer>
+			</array>
+			<key>validTitles</key>
+			<array>
+				<string>Sync</string>
+				<string>Prev View</string>
+				<string>Mark All as Read</string>
+			</array>
+		</dict>
+         <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
             <string>Footer function enabled</string>
         </dict>
 		<dict>
@@ -39,7 +73,7 @@
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
-            <string>Sync Arrow Threshold</string>
+            <string>Header function threshold</string>
         </dict>
        <dict>
             <key>cell</key>
@@ -63,7 +97,7 @@
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
-            <string>Read Arrow Threshold</string>
+            <string>Footer function threshold</string>
         </dict>
        <dict>
             <key>cell</key>
@@ -87,13 +121,7 @@
     			<key>cell</key>
     			<string>PSGroupCell</string>
     			<key>footerText</key>
-    			<string>author @r_plus</string>
-		</dict>
-		<dict>
-    			<key>cell</key>
-    			<string>PSGroupCell</string>
-    			<key>footerText</key>
-    			<string>SourceCode on github.</string>
+    			<string>author @r_plus / SourceCode on github.</string>
 		</dict>
     </array>
 </dict>

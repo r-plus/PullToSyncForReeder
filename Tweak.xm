@@ -3,15 +3,19 @@
 #import <AudioToolbox/AudioServices.h>
 
 #define REFRESH_HEADER_HEIGHT 48.0f   //52.0f
-#define TEXT_PULL @"Pull down to sync"
-#define TEXT_RELEASE @"Release to sync"
+#define TEXT_PULL_ROOT @"Pull down to Sync"
+#define TEXT_RELEASE_ROOT @"Release to Sync"
 #define TEXT_SYNCING @"Syncing"
 #define TEXT_PULL_READ @"Pull up to Mark All as Read"
 #define TEXT_RELEASE_READ @"Release to Mark All as Read"
 
 static float ReadArrowThreshold = 65.0f;
 static float SyncArrowThreshold = 65.0f;
+static NSString *TEXT_PULL;
+static NSString *TEXT_RELEASE;
+static int headerFunction = 0;
 static BOOL soundEnable = NO;
+static BOOL popViewEnable = NO;
 static BOOL isDragging = NO;
 static BOOL isLoading = NO;
 static BOOL ReadEnable = YES;
@@ -160,7 +164,6 @@ __attribute__((visibility("hidden")))
 				footerLabel.text = TEXT_RELEASE_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
 				if (!soundEnable) {
-					NSLog(@"-----------triggerTail<367 and scrollView.contentOffset.y > Read Threshold");
 					AudioServicesPlaySystemSound(psst1SoundId);
 					soundEnable = YES;
 				}
@@ -168,7 +171,6 @@ __attribute__((visibility("hidden")))
 				footerLabel.text = TEXT_PULL_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
 				if (soundEnable) {
-					NSLog(@"-----------triggerTail<367 and scrollView.contentOffset.y < Read Threshold");
 					AudioServicesPlaySystemSound(popSoundId);
 					soundEnable = NO;
 				}
@@ -208,17 +210,28 @@ __attribute__((visibility("hidden")))
 }
 
 - (void)startLoading {
-	isLoading = YES;
-	
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.3];
-	self.tableView.contentInset = UIEdgeInsetsMake(SyncArrowThreshold, 0, 0, 0);
-	refreshLabel.text = TEXT_SYNCING;
-	refreshArrow.hidden = YES;
-	[refreshSpinner startAnimating];
-	[UIView commitAnimations];
-	
-	[self refresh];
+	if (headerFunction != 0) {
+		AudioServicesPlaySystemSound(psst2SoundId);
+		self.tableView.contentInset = UIEdgeInsetsZero;
+		[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
+		soundEnable = NO;
+		
+		if (headerFunction == 1)
+			[self.navigationController popViewControllerAnimated:YES];
+		
+	} else {
+		isLoading = YES;
+		
+		[UIView beginAnimations:nil context:NULL];
+		[UIView setAnimationDuration:0.3];
+		self.tableView.contentInset = UIEdgeInsetsMake(SyncArrowThreshold, 0, 0, 0);
+		refreshLabel.text = TEXT_SYNCING;
+		refreshArrow.hidden = YES;
+		[refreshSpinner startAnimating];
+		[UIView commitAnimations];
+		
+		[self refresh];
+	}
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -284,6 +297,12 @@ __attribute__((visibility("hidden")))
 	[self markAllRead:self];
 }
 
+- (void)startLoading {
+	%orig;
+	if (headerFunction == 2)
+		[self markAllRead:self];
+}
+
 - (void)refresh {
 	id tmp = [[objc_getClass("FeedListController") alloc] init];
 	[tmp sync:self];
@@ -306,6 +325,12 @@ __attribute__((visibility("hidden")))
 	[self markAllRead:self];
 }
 
+- (void)startLoading {
+	%orig;
+	if (headerFunction == 2)
+		[self markAllRead:self];
+}
+
 - (void)refresh {
 	id tmp = [[objc_getClass("FeedListController") alloc] init];
 	[tmp sync:self];
@@ -319,7 +344,7 @@ __attribute__((visibility("hidden")))
 
 - (void)addPullToSyncHeader {
 	//override for add suffix "2".
-
+	
 	refreshHeaderView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0 - REFRESH_HEADER_HEIGHT, 320, REFRESH_HEADER_HEIGHT)];
 	refreshHeaderView2.backgroundColor = [UIColor clearColor];
 	refreshHeaderView2.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -340,7 +365,7 @@ __attribute__((visibility("hidden")))
 	refreshSpinner2 = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	refreshSpinner2.frame = CGRectMake(30, 11, 20, 20);
 	refreshSpinner2.hidesWhenStopped = YES;
-	
+
 	[refreshHeaderView2 addSubview:refreshLabel2];
 	[refreshHeaderView2 addSubview:refreshArrow2];
 	[refreshHeaderView2 addSubview:refreshSpinner2];
@@ -368,14 +393,14 @@ __attribute__((visibility("hidden")))
 	} else if (isDragging && scrollView.contentOffset.y < 0) {
 		[UIView beginAnimations:nil context:NULL];
 		if (scrollView.contentOffset.y < -SyncArrowThreshold) {
-			refreshLabel2.text = TEXT_RELEASE;
+			refreshLabel2.text = TEXT_RELEASE_ROOT;
 			[refreshArrow2 layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
 			if (!soundEnable) {
 				AudioServicesPlaySystemSound(psst1SoundId);
 				soundEnable = YES;
 			}
 		} else {
-			refreshLabel2.text = TEXT_PULL;
+			refreshLabel2.text = TEXT_PULL_ROOT;
 			[refreshArrow2 layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
 			if (soundEnable) {
 				AudioServicesPlaySystemSound(popSoundId);
@@ -414,8 +439,7 @@ __attribute__((visibility("hidden")))
 
 - (void)stopLoadingComplete:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
 	//override for add suffix "2".
-
-	refreshLabel2.text = TEXT_PULL;
+	refreshLabel2.text = TEXT_PULL_ROOT;
 	refreshArrow2.hidden = NO;
 	[refreshSpinner2 stopAnimating];
 }
@@ -437,8 +461,20 @@ static void LoadSettings(CFNotificationCenterRef center, void *observer, CFStrin
 	if(!SyncArrowThreshold) SyncArrowThreshold = 65.0f;
 	ReadArrowThreshold = [[dict objectForKey:@"ReadArrowThreshold"] floatValue];
 	if(!ReadArrowThreshold) ReadArrowThreshold = 65.0f;
+	headerFunction = [[dict objectForKey:@"HeaderFunction"] intValue];
+	if(!headerFunction) headerFunction = 0;
 	if([dict objectForKey:@"ReadEnabled"] != nil) ReadEnable = [[dict objectForKey:@"ReadEnabled"] boolValue];
 
+	if (headerFunction == 1) {
+		TEXT_PULL = @"Pull down to Prev View";
+		TEXT_RELEASE = @"Release to Prev View";
+	} else if (headerFunction == 2) {
+		TEXT_PULL = @"Pull down to Mark All as Read";
+		TEXT_RELEASE = @"Release to Mark All as Read";
+	} else {
+		TEXT_PULL = @"Pull down to Sync";
+		TEXT_RELEASE = @"Release to Sync";
+	}
 	[dict release];
 }
 	
@@ -453,6 +489,8 @@ static void PullToSyncForReeder_initializer()
 	
 	soundEnable = NO;
 	isDragging = NO;
+	popViewEnable = NO;
+	headerFunction = 0;
 	NSURL *psst1WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst1.wav"];
 	NSURL *psst2WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst2.wav"];
 	NSURL *popWavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/pop.wav"];
