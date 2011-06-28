@@ -15,6 +15,20 @@
 	</dict>
 	<key>items</key>
 	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+              <string>jp.r-plus.PullToSyncForReeder</string>
+			<key>key</key>
+			<string>SoundEnabled</string>
+			<key>label</key>
+			<string>Sound Enabled</string>
+              <key>PostNotification</key>
+              <string>jp.r-plus.PullToSyncForReeder.settingschanged</string>
+		</dict>
          <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
@@ -121,7 +135,7 @@
     			<key>cell</key>
     			<string>PSGroupCell</string>
     			<key>footerText</key>
-    			<string>author @r_plus / SourceCode on github.</string>
+    			<string>Author @r_plus / SourceCode on github.</string>
 		</dict>
     </array>
 </dict>

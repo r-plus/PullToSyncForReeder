@@ -15,10 +15,10 @@ static NSString *TEXT_PULL;
 static NSString *TEXT_RELEASE;
 static int headerFunction = 0;
 static BOOL soundEnable = NO;
-static BOOL popViewEnable = NO;
 static BOOL isDragging = NO;
 static BOOL isLoading = NO;
 static BOOL ReadEnable = YES;
+static BOOL isSoundEnabledByPlist = YES;
 static SystemSoundID psst1SoundId;
 static SystemSoundID psst2SoundId;
 static SystemSoundID popSoundId;
@@ -135,14 +135,14 @@ __attribute__((visibility("hidden")))
 		if (scrollView.contentOffset.y < -SyncArrowThreshold) {
 			refreshLabel.text = TEXT_RELEASE;
 			[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-			if (!soundEnable) {
+			if (!soundEnable && isSoundEnabledByPlist) {
 				AudioServicesPlaySystemSound(psst1SoundId);
 				soundEnable = YES;
 			}
 		} else {
 			refreshLabel.text = TEXT_PULL;
 			[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-			if (soundEnable) {
+			if (soundEnable && isSoundEnabledByPlist) {
 				AudioServicesPlaySystemSound(popSoundId);
 				soundEnable = NO;
 			}
@@ -163,14 +163,14 @@ __attribute__((visibility("hidden")))
 			if (scrollView.contentOffset.y > ReadArrowThreshold) {
 				footerLabel.text = TEXT_RELEASE_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-				if (!soundEnable) {
+				if (!soundEnable && isSoundEnabledByPlist) {
 					AudioServicesPlaySystemSound(psst1SoundId);
 					soundEnable = YES;
 				}
 			} else {
 				footerLabel.text = TEXT_PULL_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-				if (soundEnable) {
+				if (soundEnable && isSoundEnabledByPlist) {
 					AudioServicesPlaySystemSound(popSoundId);
 					soundEnable = NO;
 				}
@@ -179,14 +179,14 @@ __attribute__((visibility("hidden")))
 			if (tableTail > triggerTail + ReadArrowThreshold) {
 				footerLabel.text = TEXT_RELEASE_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-				if (!soundEnable) {
+				if (!soundEnable && isSoundEnabledByPlist) {
 					AudioServicesPlaySystemSound(psst1SoundId);
 					soundEnable = YES;
 				}
 			} else {
 				footerLabel.text = TEXT_PULL_READ;
 				[footerArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-				if (soundEnable) {
+				if (soundEnable && isSoundEnabledByPlist) {
 					AudioServicesPlaySystemSound(popSoundId);
 					soundEnable = NO;
 				}
@@ -197,7 +197,8 @@ __attribute__((visibility("hidden")))
 }
 
 - (void)markAllAsReadAndPlaySound {
-	AudioServicesPlaySystemSound(psst2SoundId);
+	if (isSoundEnabledByPlist)
+		AudioServicesPlaySystemSound(psst2SoundId);
 	self.tableView.contentInset = UIEdgeInsetsZero;
 	[footerArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
 	soundEnable = NO;
@@ -205,13 +206,15 @@ __attribute__((visibility("hidden")))
 
 - (void)refresh {
 	soundEnable = NO;
-	AudioServicesPlaySystemSound(psst2SoundId);
+	if (isSoundEnabledByPlist)
+		AudioServicesPlaySystemSound(psst2SoundId);
 	[self performSelector:@selector(stopLoading) withObject:nil afterDelay:1.0];
 }
 
 - (void)startLoading {
 	if (headerFunction != 0) {
-		AudioServicesPlaySystemSound(psst2SoundId);
+		if (isSoundEnabledByPlist)
+			AudioServicesPlaySystemSound(psst2SoundId);
 		self.tableView.contentInset = UIEdgeInsetsZero;
 		[refreshArrow layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
 		soundEnable = NO;
@@ -265,7 +268,8 @@ __attribute__((visibility("hidden")))
 
 - (void)stopLoading {
 	isLoading = NO;
-	AudioServicesPlaySystemSound(popSoundId);
+	if (isSoundEnabledByPlist)
+		AudioServicesPlaySystemSound(popSoundId);
 	
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDelegate:self];
@@ -395,14 +399,14 @@ __attribute__((visibility("hidden")))
 		if (scrollView.contentOffset.y < -SyncArrowThreshold) {
 			refreshLabel2.text = TEXT_RELEASE_ROOT;
 			[refreshArrow2 layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-			if (!soundEnable) {
+			if (!soundEnable && isSoundEnabledByPlist) {
 				AudioServicesPlaySystemSound(psst1SoundId);
 				soundEnable = YES;
 			}
 		} else {
 			refreshLabel2.text = TEXT_PULL_ROOT;
 			[refreshArrow2 layer].transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-			if (soundEnable) {
+			if (soundEnable && isSoundEnabledByPlist) {
 				AudioServicesPlaySystemSound(popSoundId);
 				soundEnable = NO;
 			}
@@ -464,6 +468,7 @@ static void LoadSettings(CFNotificationCenterRef center, void *observer, CFStrin
 	headerFunction = [[dict objectForKey:@"HeaderFunction"] intValue];
 	if(!headerFunction) headerFunction = 0;
 	if([dict objectForKey:@"ReadEnabled"] != nil) ReadEnable = [[dict objectForKey:@"ReadEnabled"] boolValue];
+	if([dict objectForKey:@"SoundEnabled"] != nil) isSoundEnabledByPlist = [[dict objectForKey:@"SoundEnabled"] boolValue];
 
 	if (headerFunction == 1) {
 		TEXT_PULL = @"Pull down to Prev View";
@@ -486,10 +491,9 @@ static void PullToSyncForReeder_initializer()
 	// Reeder only!
 	if (![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"ch.reeder"])
 		return;
-	
+	isSoundEnabledByPlist = YES;
 	soundEnable = NO;
 	isDragging = NO;
-	popViewEnable = NO;
 	headerFunction = 0;
 	NSURL *psst1WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst1.wav"];
 	NSURL *psst2WavURL = [NSURL fileURLWithPath:@"/Library/PullToSyncForReeder/psst2.wav"];
